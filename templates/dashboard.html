@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}{{ city }} — Weather Dash{% endblock %}
+
+{% block content %}
+{% if error %}
+<!-- ── Error State ──────────────────────────────────────────────────────── -->
+<div class="error-state">
+    <div class="error-card reveal active">
+        <h2 class="serif-heading" style="font-size: 2.5rem; color: var(--accent-gold-base);">Terminal Error</h2>
+        <p style="color: var(--text-muted); margin-top: 16px;">{{ error_message }}</p>
+        <a href="{{ url_for('dashboard') }}" class="pill-btn">Re-initialize</a>
+    </div>
+</div>
+
+{% else %}
+<!-- ── Hero Section (Central Node) ──────────────────────────────────────── -->
+<section class="hero-section" id="hero-section">
+    <div class="hero-card reveal active">
+        <p class="tracking-wide-caps" style="color: var(--accent-gold-base); margin-bottom: 24px;">LIVE SATELLITE FEED</p>
+        
+        <h1 class="hero-title">
+            <span class="gold-accent">{{ weather.city }}</span>, {{ weather.country }}
+        </h1>
+        
+        <div class="temperature-display" id="temp-value">
+            {{ weather.temp | round(1) }}<sup>°</sup>
+        </div>
+        
+        <p class="weather-condition">
+            Currently <span id="weather-desc">{{ weather.weather.description | title }}</span> &middot; Feels like {{ weather.feels_like | round(1) }}°C
+        </p>
+
+        <div class="cta-group">
+            <button class="pill-btn">Forecast Model</button>
+            <button class="pill-btn pill-btn-outline">Global Map</button>
+        </div>
+
+        <div class="hero-stats">
+            <div class="hero-stat-item">
+                <span class="hero-stat-label">High</span>
+                <span class="hero-stat-value">▼ {{ weather.temp_min | round(1) }}°</span>
+            </div>
+            <div class="hero-stat-item">
+                <span class="hero-stat-label">Low</span>
+                <span class="hero-stat-value">▲ {{ weather.temp_max | round(1) }}°</span>
+            </div>
+            <div class="hero-stat-item">
+                <span class="hero-stat-label">Updated at</span>
+                <span class="hero-stat-value" style="font-size: 1rem;">{{ weather.updated_time }}</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Metrics Grid (Features) ──────────────────────────────────────────── -->
+<section class="metrics-section" id="metrics-section">
+    <div class="section-header reveal active">
+        <h2 class="section-title serif-heading">Atmospheric Data</h2>
+        <p class="section-subtitle">Real-Time Synthesizer Metrics</p>
+    </div>
+
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-icon-box">💧</div>
+            <h3 class="metric-title">Humidity Grid</h3>
+            <p class="metric-body">Current atmospheric moisture content derived from local sensors.</p>
+            <div class="metric-value-box" style="margin-top: 24px;">
+                <span class="metric-value">{{ weather.humidity }}<span style="font-size: 1rem; color: var(--text-muted)">%</span></span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" style="width: {{ weather.humidity }}%"></div>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon-box">🌬️</div>
+            <h3 class="metric-title">Wind Vector</h3>
+            <p class="metric-body">Calculated surface wind dynamics, currently flowing from the {{ weather.wind_direction }}.</p>
+            <div class="metric-value-box" style="margin-top: 24px;">
+                <span class="metric-value">{{ weather.wind_speed_kmh }}<span style="font-size: 1rem; color: var(--text-muted)"> km/h</span></span>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon-box">🔵</div>
+            <h3 class="metric-title">Core Pressure</h3>
+            <p class="metric-body">Barometric structural pressure affecting the immediate zone.</p>
+            <div class="metric-value-box" style="margin-top: 24px;">
+                <span class="metric-value">{{ weather.pressure }}<span style="font-size: 1rem; color: var(--text-muted)"> hPa</span></span>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon-box">👁️</div>
+            <h3 class="metric-title">Optical Range</h3>
+            <p class="metric-body">Visual clarity index measured across the local environment boundary.</p>
+            <div class="metric-value-box" style="margin-top: 24px;">
+                <span class="metric-value">{{ weather.visibility_km }}<span style="font-size: 1rem; color: var(--text-muted)"> km</span></span>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon-box">☁️</div>
+            <h3 class="metric-title">Cloud Cover</h3>
+            <p class="metric-body">Percentage of sky domain obscured by varied cloud formations.</p>
+            <div class="metric-value-box" style="margin-top: 24px;">
+                <span class="metric-value">{{ weather.clouds }}<span style="font-size: 1rem; color: var(--text-muted)">%</span></span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" style="width: {{ weather.clouds }}%"></div>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon-box">🌅</div>
+            <h3 class="metric-title">Solar Cycle</h3>
+            <p class="metric-body">Daily orbital rotation indicating prime daylight hours for this node.</p>
+            <div class="metric-value-box" style="margin-top: 16px;">
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <span style="font-size: 0.8rem; color: var(--text-muted); font-family: 'Inter', sans-serif">Rise // {{ weather.sunrise_time }}</span>
+                    <span style="font-size: 0.8rem; color: var(--text-muted); font-family: 'Inter', sans-serif">Set // {{ weather.sunset_time }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── 5-Day Forecast (Pricing Style) ───────────────────────────────────── -->
+{% if forecast and forecast.daily %}
+<section class="forecast-section" id="forecast-section">
+    <div class="section-header reveal">
+        <h2 class="section-title serif-heading">Predictive Model</h2>
+        <p class="section-subtitle">The 5-Day Orbital Readout</p>
+    </div>
+    
+    <div class="pricing-grid">
+        {% for day in forecast.daily %}
+        <div class="pricing-card reveal {% if loop.index == 1 %}highlighted{% endif %}">
+            {% if loop.index == 1 %}
+            <div class="badge-popular">Primary Node</div>
+            {% endif %}
+            
+            <h3 style="font-family: 'Inter', sans-serif; font-size: 1.15rem; color: var(--text-primary);">{{ day.date_display }}</h3>
+            
+            <div class="price-display">
+                {{ day.temp_max | round | int }}<span>°</span>
+            </div>
+            
+            <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+                <img src="{{ day.icon_url }}" alt="{{ day.description }}" style="width: 64px; filter: drop-shadow(0 0 10px rgba(167, 139, 113, 0.4));">
+            </div>
+            
+            <p style="color: var(--accent-gold-light); font-size: 0.9rem; margin-bottom: 24px; min-height: 44px;">
+                {{ day.description | title }}
+            </p>
+            
+            <button class="pill-btn pill-btn-outline" style="width: 100%; margin-bottom: 24px;">View Matrix</button>
+            
+            <ul class="pricing-list">
+                <li>Low: {{ day.temp_min | round | int }}°C</li>
+                <li>Humidity: {{ day.humidity_avg }}%</li>
+                <li>Wind: {{ day.wind_speed_avg }} m/s</li>
+                {% if day.pop_max > 0 %}
+                <li>Precipitation: {{ day.pop_max }}%</li>
+                {% endif %}
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- ── Hourly Forecast (Team Style) ─────────────────────────────────────── -->
+{% if hourly and hourly.hourly %}
+<section class="hourly-section" id="hourly-section" style="margin-bottom: 150px;">
+    <div class="section-header reveal">
+        <h2 class="section-title serif-heading">Short-Term Array</h2>
+        <p class="section-subtitle">Next 24 Hours Sequence</p>
+    </div>
+
+    <!-- Scrollable container masquerading as the 'team' component -->
+    <div class="hourly-scroll">
+        {% for slot in hourly.hourly[:12] %}
+        <div class="team-card reveal">
+            <div class="team-image-container">
+                <img src="{{ slot.icon_url }}" alt="{{ slot.description }}">
+            </div>
+            <div class="team-info">
+                <h4 class="team-name">{{ slot.temp | round(1) }}°</h4>
+                <p class="team-role">{{ slot.time_short }} // POP: {{ slot['pop'] }}%</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- Hidden data for WebSocket (city name and base ws URL) -->
+<input type="hidden" id="current-city" value="{{ weather.city }}">
+<input type="hidden" id="ws-url-base" value="{{ ws_url }}">
+
+{% endif %}
+{% endblock %}

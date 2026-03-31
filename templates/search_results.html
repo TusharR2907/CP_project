@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Search "{{ query }}" — Weather Dashboard{% endblock %}
+
+{% block content %}
+<section class="search-section" id="search-section" style="padding-top: 80px;">
+    <div class="section-header reveal active">
+        <h2 class="section-title serif-heading">System Query</h2>
+        <p class="section-subtitle">Node Search Results</p>
+    </div>
+
+    {% if query %}
+    <p style="color: var(--text-secondary); text-align: center; margin-bottom: 40px; font-style: italic;">
+        Establishing uplink for "<strong>{{ query }}</strong>"
+    </p>
+    {% endif %}
+
+    {% if error_message %}
+    <div class="error-card reveal active" style="margin: 0 auto;">
+        <p style="color: var(--accent-gold-base);">{{ error_message }}</p>
+    </div>
+    {% endif %}
+
+    {% if results %}
+    <div style="max-width: 800px; margin: 0 auto;">
+        {% for city in results %}
+        <a href="{{ url_for('dashboard', city=city.name) }}" class="search-result-card reveal">
+            <div class="result-main">
+                <h3 class="result-city">{{ city.name }}</h3>
+                <p class="result-detail">
+                    {% if city.state %}{{ city.state }}, {% endif %}{{ city.country }}
+                </p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 32px;">
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-family: 'Inter', monospace; font-size: 0.75rem; color: var(--text-muted);">
+                    <span>LAT {{ city.lat | round(2) }}° N</span>
+                    <span>LON {{ city.lon | round(2) }}° E</span>
+                </div>
+                <div class="result-arrow">→</div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% elif query and not error_message %}
+    <div class="error-card reveal active" style="text-align: center; margin: 0 auto; max-width: 600px;">
+        <h3 class="serif-heading" style="font-size: 2rem; color: var(--accent-gold-light); margin-bottom: 16px;">Node Not Found</h3>
+        <p style="color: var(--text-muted);">No operational sensors located matching "<strong>{{ query }}</strong>"</p>
+        <p style="margin-top: 24px; font-size: 0.85rem; color: rgba(255,255,255,0.4); text-transform: uppercase;">Awaiting new coordinates</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}
